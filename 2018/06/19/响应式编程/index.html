@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>响应式编程漫谈 | AnderKing12</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="编程范式的演进自从高级编程语言被发明以来，各种编程范式的编程语言层出不穷，命令式编程、面向对象编程、函数式编程都曾经或者正在软件开发领域占有一席之地。 上世纪九十年代前，命令式编程仍然在软件开发领域占有主导地位。随着软件规模的不断增大，面向对象编程以其封装性、可重用性受到开发者和组织的青睐。 随着摩尔定律的失效，单核CPU的计算能力几乎达到了极限，CPU进入多核时代，程序员转而通过并发编程，分布式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="响应式编程漫谈">
+<meta property="og:url" content="http://yoursite.com/2018/06/19/响应式编程/index.html">
+<meta property="og:site_name" content="AnderKing12">
+<meta property="og:description" content="编程范式的演进自从高级编程语言被发明以来，各种编程范式的编程语言层出不穷，命令式编程、面向对象编程、函数式编程都曾经或者正在软件开发领域占有一席之地。 上世纪九十年代前，命令式编程仍然在软件开发领域占有主导地位。随着软件规模的不断增大，面向对象编程以其封装性、可重用性受到开发者和组织的青睐。 随着摩尔定律的失效，单核CPU的计算能力几乎达到了极限，CPU进入多核时代，程序员转而通过并发编程，分布式">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-20T05:30:23.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="响应式编程漫谈">
+<meta name="twitter:description" content="编程范式的演进自从高级编程语言被发明以来，各种编程范式的编程语言层出不穷，命令式编程、面向对象编程、函数式编程都曾经或者正在软件开发领域占有一席之地。 上世纪九十年代前，命令式编程仍然在软件开发领域占有主导地位。随着软件规模的不断增大，面向对象编程以其封装性、可重用性受到开发者和组织的青睐。 随着摩尔定律的失效，单核CPU的计算能力几乎达到了极限，CPU进入多核时代，程序员转而通过并发编程，分布式">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/typing.css">
+  <link rel="stylesheet" href="/css/donate.css">
+  
+</head>
+
+  
+    
+      <body>
+    
+  
+      <div id="container" class="container">
+        <article id="post-响应式编程" class="article article-type-post" itemscope itemprop="blogPost">
+  <header id="header" class="header">
+    <div class="mobile-nav">
+      <h1 class="nickname">AnderKing12</h1>
+      <a id="menu">
+        &#9776; Menu
+      </a>
+    </div>
+    
+        <nav id="main-nav" class="main-nav">
+    
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+  </nav>
+</header>
+
+  <hr/>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      响应式编程漫谈
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry typo" itemprop="articleBody">
+      
+        <h2 id="编程范式的演进"><a href="#编程范式的演进" class="headerlink" title="编程范式的演进"></a>编程范式的演进</h2><p>自从高级编程语言被发明以来，各种编程范式的编程语言层出不穷，命令式编程、面向对象编程、函数式编程都曾经或者正在软件开发领域占有一席之地。</p>
+<p>上世纪九十年代前，命令式编程仍然在软件开发领域占有主导地位。随着软件规模的不断增大，面向对象编程以其封装性、可重用性受到开发者和组织的青睐。</p>
+<p>随着摩尔定律的失效，单核CPU的计算能力几乎达到了极限，CPU进入多核时代，程序员转而通过并发编程，分布式系统来应对越来越复杂的计算任务。然而并发编程并不是银弹，做为一种基于共享内存的并发编程，多线程编程常有的死锁、线程饥渴、竞争条件等问题，而且多线程bug以其难以重现定位而臭名昭著。</p>
+<p>今年来逐渐火爆的函数式编程以其提倡的：</p>
+<ul>
+<li>函数是编程语言的一等公民(function as first-class citizen)</li>
+<li>不可变量(immutable variable)</li>
+<li>无副作用的函数(no side-effect/reference transparency)</li>
+<li>可组合的函数(composable functions)</li>
+</ul>
+<p>顺利地解决了因可变量mutable variable被多个线程共享、修改等而导致可能的多线程的bug。</p>
+<p>然而，函数式编程就是现代的完美的编程范式了么？远远不是。<br>即使使用了函数式编程，程序员总会需要处理异步任务或者事件，并且总有一些IO或者计算密集型的任务，这些任务可能还会阻塞其他活动线程，而且处理异常、失败、线程任务之间的同步都比较困难而且容易出错。程序员需要不断地询问一个线程的运算结果是否可用，另外我们希望程序能够响应及时，这时候响应式编程应运而生。</p>
+<h2 id="响应式编程"><a href="#响应式编程" class="headerlink" title="响应式编程"></a>响应式编程</h2><p>跟面向对象编程或函数式编程一样，响应式编程也是一种编程范式，响应式编程是一种通过异步和数据流来构建事物关系的编程模型。<br>举个例子：<br>A  = B + C<br>A被赋予了B和C相加的值，如果我们改变B或C的值，A的值并不会随之改变。而如果我们运用一种机制，当B或C的值发生变化的时候，A也随之变化，这样就实现了“响应式”。</p>
+<p>响应式编程的提出目的就是简化类似的操作，因此它在用户界面编程领域以及基于实时系统的动画方面都有广泛运用，另一方面在处理嵌套回调的异步事件，复杂的列表过滤和变换的时候也有良好的表现。</p>
+<p>目前来看，响应式编程至少有这些好处：</p>
+<ul>
+<li>在业务层面实现代码逻辑分离，方便后期维护和扩展</li>
+<li>极大提高程序响应速度，充分发掘CPU的能力</li>
+<li>帮助开发者提高代码的抽象能力和充分理解业务逻辑</li>
+<li>Rx丰富的操作符会帮助我们极大的简化代码逻辑</li>
+</ul>
+<p>谈到响应式编程，不得不提Reactive Extensions，这个概念最早是起源于微软.NET社区，目前已经有好多语言对其进行了实现，如RxJava、RxSwift、RxJS等等，微软的官方的解释：</p>
+<blockquote>
+<p><strong>Reactive Extensions</strong>(<strong>Rx</strong>) is a library for composing asynchronous and event-based<br>programs using observable sequences and LINQ-style query operators.  </p>
+</blockquote>
+<p>简单地说就是利用Observable和LINQ风格的基于事件驱动的编程扩展库，它是响应式编程的一种实现，用于解决异步事件流的一种解决方案，就是利用它可以很好地控制事件流的异步操作，将事件的发生和对事件的响应进行解耦，可以让开发者不再关心复杂的线程处理、锁等并发相关问题。</p>
+<p>其核心概念是Observable，表示有限或者无限多个现在或者将来到达的事件。Observable提供了onNext，onError， onCompleted供开发者定制新元素到达，出现错误，或者流结束时的程序的行为。<br>并提供了List上类似的操作，如map，filter，reduce，大大降低了异步事件编程的复杂度。</p>
+<p>在响应式编程中有两个设计模式被应用得比较广泛，观察者和迭代器。<br>观察者模式定义了对象间的一种一对多的依赖关系，当一个对象状态发生变化时，其相关依赖对象皆得到通知并被自动更新。观察者模式又叫做发布订阅模式、模型视图模式、源监听器模式或从属者模式<br>观察者可以分为两种：push和pul</p>
+<pre><code>1. push，就是被监听者将消息推送出去，进而触发监听者的相应事件，响应式编程一般采用这种模式
+2. pull，就是监听者主动从被监听者处获取数据
+</code></pre><p>迭代器模式：提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露内部的表示</p>
+<h2 id="函数响应式编程"><a href="#函数响应式编程" class="headerlink" title="函数响应式编程"></a>函数响应式编程</h2><p>函数响应式编程（FRP）是指主要利用函数式编程的思想和方法（函数、高阶函数）来支持的响应式编程。<br>FRP将输入分为两个基础部分：行为和事件。行为是随时间连续变化的数据，而事件则是基于离散的时间序列。</p>
+<p>后续我会开始以RxSwift的这方面继续深入iOS针对响应式编程的实践。</p>
+
+      
+      <!-- <div id="donate" class="donate">
+        <a id="github" href="https://github.com/ssqjd" target="_blank" class="pos-f tr3" title="Github"></a>
+	      <div id="DonateText" class="tr3">Donate</div>
+	      <ul id="donateBox" class="list pos-f tr3">
+		      <li id="PayPal"><a href="" target="_blank">PayPal</a></li>
+		      <li id="BTC" data-footnote="Copy addres and show QRCode"><button id="BTCBn"  data-clipboard-target="#btc-key" alt="Copy to clipboard">Bitcoin</button></li>
+		      <li id="AliPay">AliPay</li>
+		      <li id="WeChat">WeChat</li>
+	      </ul>
+	      <div id="QRBox" class="pos-f left-100">
+		      <div id="BTCQR" class="MainBox" style="background-image: url()"></div>
+		      <div id="AliPayQR" class="MainBox" style="background-image: url()"></div>
+		      <div id="WeChatQR" class="MainBox" style="background-image: url()"></div>
+	      </div>
+	      <!-- Bitcoin 账号 -->
+	      <!-- <input id="btc-key" type="text" value="" readonly="readonly">
+      </div> -->
+    </div>
+    <footer class="article-footer">
+      <ul class="article-meta">
+        <li>
+          <span class="label">Published Date:</span>
+          <a href="/2018/06/19/响应式编程/" class="article-date">
+  <time datetime="2018-06-19T02:32:27.000Z" itemprop="datePublished">2018-06-19</time>
+</a>
+
+        </li>
+        
+        
+        <hr/>
+      </ul>
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav" class="article-nav">
+  
+    <span id="article-nav-newer" class="article-nav-link-wrap newer"></span>
+  
+  
+    <a href="/2018/05/11/时间管理的那些事/" id="article-nav-older" class="article-nav-link-wrap older">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">时间管理的那些事</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+      </div>
+      
+    <footer id="footer" class="post-footer footer">
+      
+      <hr/>
+      <div id="footerContent" class="footer-content">
+        <p>anderking12</p>
+
+
+      </div>
+    </footer>
+
+      
+
+
+
+
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/typing.js"></script>
+<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+
+
+
+
+
+
+
+    </div>
+  </body>
+</html>
