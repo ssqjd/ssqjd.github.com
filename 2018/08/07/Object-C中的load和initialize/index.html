@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="AnderKing12">
 <meta property="og:description" content="load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此load方法总是在main函数之前调用。 initialize方法在第一次给某个类发送消息时调用（比如实例化一个对象），并且只会调用一次。initialize方法实际上是一种惰性调用，也就是说如果一个类一直没被用到，那它的initialize方法也不会被调用，这一点">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-07T01:29:31.625Z">
+<meta property="og:updated_time" content="2018-08-07T01:31:57.710Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Object-C中的load和initialize">
 <meta name="twitter:description" content="load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此load方法总是在main函数之前调用。 initialize方法在第一次给某个类发送消息时调用（比如实例化一个对象），并且只会调用一次。initialize方法实际上是一种惰性调用，也就是说如果一个类一直没被用到，那它的initialize方法也不会被调用，这一点">
@@ -68,7 +68,7 @@
       
         <p>load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此load方法总是在main函数之前调用。</p>
 <p>initialize方法在第一次给某个类发送消息时调用（比如实例化一个对象），并且只会调用一次。initialize方法实际上是一种惰性调用，也就是说如果一个类一直没被用到，那它的initialize方法也不会被调用，这一点有利于节约资源。</p>
-<h3 id="调用规则"><a href="#调用规则" class="headerlink" title="调用规则"></a>调用规则</h3><p>如果一个类实现了load方法，在调用这个方法前会首先调用父类的load方法。而且这个过程是自动完成的，并不需要我们手动实现。顺序是父类load&gt;子类load&gt;子类category的Load。如果一个类没有实现load方法，那么就不会调用它父类的load方法<br>与load方法类似的是，在initialize方法内部也会调用父类的方法，而且不需要我们显示的写出来。与load方法不同之处在于，即使子类没有实现initialize方法，也会调用父类的方法</p>
+<h3 id="调用规则"><a href="#调用规则" class="headerlink" title="调用规则"></a>调用规则</h3><p>如果一个类实现了load方法，在调用这个方法前会首先调用父类的load方法。而且这个过程是自动完成的，并不需要我们手动实现。顺序是父类load&gt;子类load&gt;子类category的Load。如果一个类没有实现load方法，那么就不会调用它父类的load方法。<br>与load方法类似的是，在initialize方法内部也会调用父类的方法，而且不需要我们显示的写出来。与load方法不同之处在于，即使子类没有实现initialize方法，也会调用父类的方法。</p>
 <h3 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h3><p>在Compile Sources中，文件的排放顺序就是其装载顺序，自然也就是load方法调用的顺序。</p>
 <h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>load方法通常用来进行Method Swizzle，initialize方法一般用于初始化全局变量或静态变量。</p>
 <h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><p>load和initialize方法内部使用了锁，因此它们是线程安全的。实现时要尽可能保持简单，避免阻塞线程，不要再使用锁。</p>
