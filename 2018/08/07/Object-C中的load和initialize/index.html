@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Object-C中的load和initialize | AnderKing12</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此load方法总是在main函数之前调用。 initialize方法在第一次给某个类发送消息时调用（比如实例化一个对象），并且只会调用一次。initialize方法实际上是一种惰性调用，也就是说如果一个类一直没被用到，那它的initialize方法也不会被调用，这一点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Object-C中的load和initialize">
+<meta property="og:url" content="http://yoursite.com/2018/08/07/Object-C中的load和initialize/index.html">
+<meta property="og:site_name" content="AnderKing12">
+<meta property="og:description" content="load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此load方法总是在main函数之前调用。 initialize方法在第一次给某个类发送消息时调用（比如实例化一个对象），并且只会调用一次。initialize方法实际上是一种惰性调用，也就是说如果一个类一直没被用到，那它的initialize方法也不会被调用，这一点">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-07T01:29:31.625Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Object-C中的load和initialize">
+<meta name="twitter:description" content="load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此load方法总是在main函数之前调用。 initialize方法在第一次给某个类发送消息时调用（比如实例化一个对象），并且只会调用一次。initialize方法实际上是一种惰性调用，也就是说如果一个类一直没被用到，那它的initialize方法也不会被调用，这一点">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/typing.css">
+  <link rel="stylesheet" href="/css/donate.css">
+  
+</head>
+
+  
+    
+      <body>
+    
+  
+      <div id="container" class="container">
+        <article id="post-Object-C中的load和initialize" class="article article-type-post" itemscope itemprop="blogPost">
+  <header id="header" class="header">
+    <div class="mobile-nav">
+      <h1 class="nickname">AnderKing12</h1>
+      <a id="menu">
+        &#9776; Menu
+      </a>
+    </div>
+    
+        <nav id="main-nav" class="main-nav">
+    
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+  </nav>
+</header>
+
+  <hr/>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Object-C中的load和initialize
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry typo" itemprop="articleBody">
+      
+        <p>load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此load方法总是在main函数之前调用。</p>
+<p>initialize方法在第一次给某个类发送消息时调用（比如实例化一个对象），并且只会调用一次。initialize方法实际上是一种惰性调用，也就是说如果一个类一直没被用到，那它的initialize方法也不会被调用，这一点有利于节约资源。</p>
+<h3 id="调用规则"><a href="#调用规则" class="headerlink" title="调用规则"></a>调用规则</h3><p>如果一个类实现了load方法，在调用这个方法前会首先调用父类的load方法。而且这个过程是自动完成的，并不需要我们手动实现。顺序是父类load&gt;子类load&gt;子类category的Load。如果一个类没有实现load方法，那么就不会调用它父类的load方法<br>与load方法类似的是，在initialize方法内部也会调用父类的方法，而且不需要我们显示的写出来。与load方法不同之处在于，即使子类没有实现initialize方法，也会调用父类的方法</p>
+<h3 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h3><p>在Compile Sources中，文件的排放顺序就是其装载顺序，自然也就是load方法调用的顺序。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>load方法通常用来进行Method Swizzle，initialize方法一般用于初始化全局变量或静态变量。</p>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><p>load和initialize方法内部使用了锁，因此它们是线程安全的。实现时要尽可能保持简单，避免阻塞线程，不要再使用锁。</p>
+
+      
+      <!-- <div id="donate" class="donate">
+        <a id="github" href="https://github.com/ssqjd" target="_blank" class="pos-f tr3" title="Github"></a>
+	      <div id="DonateText" class="tr3">Donate</div>
+	      <ul id="donateBox" class="list pos-f tr3">
+		      <li id="PayPal"><a href="" target="_blank">PayPal</a></li>
+		      <li id="BTC" data-footnote="Copy addres and show QRCode"><button id="BTCBn"  data-clipboard-target="#btc-key" alt="Copy to clipboard">Bitcoin</button></li>
+		      <li id="AliPay">AliPay</li>
+		      <li id="WeChat">WeChat</li>
+	      </ul>
+	      <div id="QRBox" class="pos-f left-100">
+		      <div id="BTCQR" class="MainBox" style="background-image: url()"></div>
+		      <div id="AliPayQR" class="MainBox" style="background-image: url()"></div>
+		      <div id="WeChatQR" class="MainBox" style="background-image: url()"></div>
+	      </div>
+	      <!-- Bitcoin 账号 -->
+	      <!-- <input id="btc-key" type="text" value="" readonly="readonly">
+      </div> -->
+    </div>
+    <footer class="article-footer">
+      <ul class="article-meta">
+        <li>
+          <span class="label">Published Date:</span>
+          <a href="/2018/08/07/Object-C中的load和initialize/" class="article-date">
+  <time datetime="2018-08-07T01:24:09.000Z" itemprop="datePublished">2018-08-07</time>
+</a>
+
+        </li>
+        
+        
+        <hr/>
+      </ul>
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav" class="article-nav">
+  
+    <span id="article-nav-newer" class="article-nav-link-wrap newer"></span>
+  
+  
+    <a href="/2018/06/19/响应式编程/" id="article-nav-older" class="article-nav-link-wrap older">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">响应式编程漫谈</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+      </div>
+      
+    <footer id="footer" class="post-footer footer">
+      
+      <hr/>
+      <div id="footerContent" class="footer-content">
+        <p>anderking12</p>
+
+
+      </div>
+    </footer>
+
+      
+
+
+
+
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/typing.js"></script>
+<!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+
+
+
+
+
+
+
+    </div>
+  </body>
+</html>
